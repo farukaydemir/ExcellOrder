@@ -1,0 +1,68 @@
+{% if order.items %}
+<div class="order-table-container">
+    <table class="order-table">
+        <thead>
+            <tr>
+                <th>Ürün</th>
+                <th>Açıklama</th>
+                <th>Birim Fiyat</th>
+                <th>Adet</th>
+                <th>Toplam</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% set total = namespace(value=0) %}
+            {% for item in order.items %}
+            {% set total.value = total.value + item.line_total %}
+            <tr>
+                <td>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <div class="order-item-images">
+                            {% if item.product.image_path %}
+                                {% for path in item.product.image_path.split('|') %}
+                                <img src="{{ url_for('static', filename=path) }}" alt="{{ item.product.name }}">
+                                {% endfor %}
+                            {% else %}
+                                <div style="width: 40px; height: 40px; background: rgba(0,0,0,0.2); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.5rem; color: #aaa;">-</div>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <div class="item-name">{{ item.product.name }}</div>
+                            <div class="item-sku">SKU: {{ item.product.sku }}</div>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div style="font-size: 0.8rem; color: var(--text-secondary); max-width: 150px; white-space: normal;">
+                        {{ item.product.description if item.product.description else '-' }}
+                    </div>
+                </td>
+                <td>{{ "{:,.2f}".format(item.unit_price) }} ₺</td>
+                <td>
+                    <form class="update-qty-form" style="margin:0;">
+                        <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="qty-input small-qty" 
+                               hx-post="{{ url_for('update_cart', item_id=item.id) }}"
+                               hx-trigger="change"
+                               hx-target="#order-list">
+                    </form>
+                </td>
+                <td>{{ "{:,.2f}".format(item.line_total) }} ₺</td>
+                <td>
+                    <button class="btn-delete"
+                            hx-post="{{ url_for('remove_from_cart', item_id=item.id) }}"
+                            hx-target="#order-list">❌</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="order-summary">
+    <h3>Genel Toplam: <span class="highlight">{{ "{:,.2f}".format(total.value) }} ₺</span></h3>
+</div>
+{% else %}
+<div class="empty-state">
+    <p>Sipariş listesi boş.</p>
+</div>
+{% endif %}

@@ -1,0 +1,44 @@
+{% if products %}
+<ul class="product-grid">
+    {% for product in products %}
+    <li class="product-card">
+        {% if product.image_path %}
+        <div class="product-image">
+            <div class="image-gallery">
+                {% for path in product.image_path.split('|') %}
+                <img src="{{ url_for('static', filename=path) }}" alt="{{ product.name }}">
+                {% endfor %}
+            </div>
+        </div>
+        {% else %}
+        <div class="product-image placeholder">
+            <span>Resim Yok</span>
+        </div>
+        {% endif %}
+        
+        <div class="product-info">
+            <span class="sku">SKU: {{ product.sku }}</span>
+            <h3 class="name">{{ product.name }}</h3>
+            {% if product.description %}
+            <p class="description">{{ product.description }}</p>
+            {% endif %}
+            {% if product.color %}
+            <span class="color">Renk: {{ product.color }}</span>
+            {% endif %}
+            <strong class="price">{{ "{:,.2f}".format(product.unit_price) }} ₺</strong>
+        </div>
+        <form class="add-to-cart-form"
+              hx-post="{{ url_for('add_to_cart') }}" 
+              hx-target="#order-list">
+            <input type="hidden" name="product_id" value="{{ product.id }}">
+            <input type="number" name="quantity" value="1" min="1" class="qty-input">
+            <button type="submit" class="btn btn-secondary">Ekle</button>
+        </form>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<div class="empty-state">
+    <p>Ürün bulunamadı. Lütfen bir Excel dosyası yükleyin veya farklı bir kelime arayın.</p>
+</div>
+{% endif %}

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sipariş Yönetimi</title>
+    <script src="https://unpkg.com/htmx.org@1.9.4"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        
+        <header class="glass-header">
+            <h1 class="logo">Sipariş Yönetimi</h1>
+            
+            <div class="upload-section">
+                <form action="{{ url_for('upload_file') }}" method="POST" enctype="multipart/form-data" class="upload-form">
+                    <label class="file-label">
+                        <input type="file" name="file" accept=".xls,.xlsx" required class="file-input">
+                        <span>📄 Excel Seç</span>
+                    </label>
+                    <button type="submit" class="btn btn-primary">Yükle</button>
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                      {% if messages %}
+                        {% for category, message in messages %}
+                          <span class="flash-msg {{ category }}">{{ message }}</span>
+                        {% endfor %}
+                      {% endif %}
+                    {% endwith %}
+                </form>
+            </div>
+        </header>
+
+        <main class="main-layout">
+            
+            <section class="products-section glass-panel">
+                <div class="section-header" style="flex-wrap: wrap; gap: 15px;">
+                    <h2>Katalog</h2>
+                    <form id="search-form" style="margin: 0;" hx-get="{{ url_for('search_products') }}" hx-target="#product-list" hx-trigger="submit, keyup from:.search-input delay:300ms, change from:#category-input">
+                        <input type="hidden" name="category" id="category-input" value="{{ current_category }}">
+                        <input class="search-input" type="text" name="search" placeholder="Ürün Ara (SKU, Ad)..." value="{{ search }}">
+                    </form>
+                </div>
+                
+                {% if categories %}
+                <div class="category-tabs" style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 20px;">
+                    <button class="tab-btn {% if not current_category %}active{% endif %}" type="button" onclick="setCategory(this, '')">Tümü</button>
+                    {% for cat in categories %}
+                    <button class="tab-btn {% if current_category == cat %}active{% endif %}" type="button" onclick="setCategory(this, '{{ cat }}')">{{ cat }}</button>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                <div class="product-list-container" id="product-list">
+                    {% include 'partials/product_list.html' %}
+                </div>
+            </section>
+
+            <section class="order-section glass-panel">
+                <div class="section-header">
+                    <h2>Mevcut Sipariş</h2>
+                </div>
+                
+                <div class="order-list-container" id="order-list">
+                    {% include 'partials/order_list.html' %}
+                </div>
+                
+                <form action="{{ url_for('export_excel') }}" method="POST" class="export-form">
+                    <button type="submit" class="btn btn-success checkout-btn">Müşteri Excel'i Oluştur</button>
+                </form>
+            </section>
+            
+        </main>
+    </div>
+    
+    <script>
+        document.querySelector('.file-input').addEventListener('change', function(e) {
+            var fileName = e.target.files[0] ? e.target.files[0].name : "📄 Excel Seç";
+            e.target.nextElementSibling.textContent = fileName;
+        });
+
+        function setCategory(btn, cat) {
+            document.getElementById('category-input').value = cat;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            htmx.trigger('#search-form', 'submit');
+        }
+    </script>
+</body>
+</html>

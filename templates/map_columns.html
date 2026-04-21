@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sütunları Eşleştir - Sipariş Yönetimi</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .form-group { margin-bottom: 15px; display: flex; flex-direction: column; gap: 8px; }
+        .form-group label { color: var(--text-primary); font-weight: 500; font-size: 0.95rem; }
+    </style>
+</head>
+<body>
+    <div class="app-container" style="max-width: 800px; margin: 40px auto; padding: 20px;">
+        <h2 style="margin-bottom: 20px;">1 Adım Kaldı: Sütunları Eşleştirin</h2>
+        
+        <div class="glass-panel" style="margin-bottom: 20px;">
+            <p style="margin-top:0;">Sisteminizin listelemeyi doğru yapabilmesi için Excel dosyanızdaki alanların eşleştirmesini yapınız.</p>
+            <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; margin-top: 15px; font-size: 0.85rem; overflow-x: auto;">
+                <strong style="color: var(--primary-color);">Önizleme (İlk Satırlar):</strong><br>
+                <div style="margin-top: 10px; display:flex; flex-direction:column; gap:5px;">
+                    {% for row in sample_rows %}
+                    <div style="color: #cbd5e1; white-space: nowrap;">{{ row }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <form action="/process_import" method="POST" class="glass-panel" style="gap: 15px;">
+            <input type="hidden" name="filename" value="{{ filename }}">
+            
+            <div class="form-group">
+                <label>Ürün Kodu (SKU) Hangi Sütunda?</label>
+                <select name="sku" class="search-input" style="width: 100%;">
+                    <option value="-1">Yok / Seçilmedi</option>
+                    {% for i in range(cols_count) %}<option value="{{ i }}">Sütun {{ chr(65+i) }}</option>{% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Ürün Görseli Hangi Sütunda?</label>
+                <select name="img" class="search-input" style="width: 100%;">
+                    <option value="-1">Otomatik Bul (Varsayılan)</option>
+                    {% for i in range(cols_count) %}<option value="{{ i }}">Sütun {{ chr(65+i) }}</option>{% endfor %}
+                </select>
+                <small style="color: #94a3b8; font-size: 0.75rem;">Açılır menüden "Sütun B" vs seçerseniz sadece o sütunda bulunan resimler içeri alınır.</small>
+            </div>
+            
+            <div class="form-group">
+                <label>Ürün Adı Hangi Sütunda?</label>
+                <select name="name" class="search-input" style="width: 100%;">
+                    <option value="-1">Yok / Seçilmedi</option>
+                    {% for i in range(cols_count) %}<option value="{{ i }}">Sütun {{ chr(65+i) }}</option>{% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Ürün Fiyatı Hangi Sütunda?</label>
+                <select name="price" class="search-input" style="width: 100%;">
+                    <option value="-1">Yok / Seçilmedi</option>
+                    {% for i in range(cols_count) %}<option value="{{ i }}">Sütun {{ chr(65+i) }}</option>{% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Renk Hangi Sütunda?</label>
+                <select name="color" class="search-input" style="width: 100%;">
+                    <option value="-1">Yok / Seçilmedi</option>
+                    {% for i in range(cols_count) %}<option value="{{ i }}">Sütun {{ chr(65+i) }}</option>{% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Açıklama Hangi Sütunda?</label>
+                <select name="desc" class="search-input" style="width: 100%;">
+                    <option value="-1">Yok / Seçilmedi</option>
+                    {% for i in range(cols_count) %}<option value="{{ i }}">Sütun {{ chr(65+i) }}</option>{% endfor %}
+                </select>
+            </div>
+            
+            <div style="display: flex; gap: 15px; margin-top: 20px;">
+                <button type="submit" class="btn btn-success" style="flex: 1;">İçe Aktarmayı Başlat</button>
+                <a href="/" class="btn btn-secondary" style="display: inline-flex; align-items: center; justify-content: center; text-decoration: none;">İptal</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

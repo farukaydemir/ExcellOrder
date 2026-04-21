@@ -28,6 +28,14 @@ def export_order_to_excel(output_dir):
         ws.column_dimensions[ws.cell(row=1, column=col_num).column_letter].width = 15
     ws.column_dimensions['B'].width = 40 
         
+    # Map currency symbol to Excel format
+    currency_map = {
+        '₺': '#,##0.00 "₺"',
+        '$': '[$$-409]#,##0.00',
+        '€': '#,##0.00"€"'
+    }
+    excel_format = currency_map.get(order.currency, '#,##0.00 "₺"')
+
     row_num = 2
     for item in order.items:
         prod = item.product
@@ -36,17 +44,17 @@ def export_order_to_excel(output_dir):
         ws.cell(row=row_num, column=3, value=prod.color)
         
         price_cell = ws.cell(row=row_num, column=4, value=item.unit_price)
-        price_cell.number_format = '#,##0.00 ₺'
+        price_cell.number_format = excel_format
         
         ws.cell(row=row_num, column=5, value=item.quantity)
         
         total_cell = ws.cell(row=row_num, column=6, value=f"=D{row_num}*E{row_num}")
-        total_cell.number_format = '#,##0.00 ₺'
+        total_cell.number_format = excel_format
         row_num += 1
         
     ws.cell(row=row_num+1, column=5, value="Genel Toplam").font = Font(bold=True)
     grand_total_cell = ws.cell(row=row_num+1, column=6, value=f"=SUM(F2:F{row_num-1})")
-    grand_total_cell.number_format = '#,##0.00 ₺'
+    grand_total_cell.number_format = excel_format
     grand_total_cell.font = Font(bold=True)
     
     # Protecting the worksheet but keeping Adet unlocked

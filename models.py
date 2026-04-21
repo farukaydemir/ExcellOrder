@@ -20,6 +20,7 @@ class Order(db.Model):
     __tablename__ = 'orders'
     id = db.Column(db.Integer, primary_key=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    currency = db.Column(db.String(10), default='₺')
     notes = db.Column(db.Text, nullable=True)
     items = db.relationship('OrderItem', backref='order', lazy=True, cascade="all, delete-orphan")
 

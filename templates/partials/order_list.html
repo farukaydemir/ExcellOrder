@@ -38,7 +38,7 @@
                         {{ item.product.description if item.product.description else '-' }}
                     </div>
                 </td>
-                <td>{{ "{:,.2f}".format(item.unit_price) }} ₺</td>
+                <td>{{ "{:,.2f}".format(item.unit_price) }} {{ order.currency }}</td>
                 <td>
                     <form class="update-qty-form" style="margin:0;">
                         <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="qty-input small-qty" 
@@ -47,7 +47,7 @@
                                hx-target="#order-list">
                     </form>
                 </td>
-                <td>{{ "{:,.2f}".format(item.line_total) }} ₺</td>
+                <td>{{ "{:,.2f}".format(item.line_total) }} {{ order.currency }}</td>
                 <td>
                     <button class="btn-delete"
                             hx-post="{{ url_for('remove_from_cart', item_id=item.id) }}"
@@ -59,7 +59,7 @@
     </table>
 </div>
 <div class="order-summary">
-    <h3>Genel Toplam: <span class="highlight">{{ "{:,.2f}".format(total.value) }} ₺</span></h3>
+    <h3>Genel Toplam: <span class="highlight">{{ "{:,.2f}".format(total.value) }} {{ order.currency }}</span></h3>
 </div>
 {% else %}
 <div class="empty-state">

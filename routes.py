@@ -84,9 +84,10 @@ def init_routes(app):
             'color': request.form.get('color', type=int, default=-1),
             'img': request.form.get('img', type=int)
         }
+        currency = request.form.get('currency', '₺')
         
         filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
-        success, msg = import_excel_to_db_with_map(filepath, mapping)
+        success, msg = import_excel_to_db_with_map(filepath, mapping, currency)
         
         if success:
             flash(msg, 'success')
@@ -108,7 +109,8 @@ def init_routes(app):
             query = query.filter(Product.sheet_name == category)
             
         products = query.order_by(Product.id.asc()).all()
-        return render_template('partials/product_list.html', products=products)
+        order = get_active_order()
+        return render_template('partials/product_list.html', products=products, order=order)
 
     @app.route('/cart/add', methods=['POST'])
     def add_to_cart():

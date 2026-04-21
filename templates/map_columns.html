@@ -78,6 +78,15 @@
                     {% for i in range(cols_count) %}<option value="{{ i }}">Sütun {{ chr(65+i) }}</option>{% endfor %}
                 </select>
             </div>
+
+            <div class="form-group" style="margin-top: 10px;">
+                <label>💰 Kullanılacak Para Birimi</label>
+                <select name="currency" class="search-input" style="width: 100%; border-color: var(--success-color);">
+                    <option value="₺">Türk Lirası (₺)</option>
+                    <option value="$">Amerikan Doları ($)</option>
+                    <option value="€">Euro (€)</option>
+                </select>
+            </div>
             
             <div style="display: flex; gap: 15px; margin-top: 20px;">
                 <button type="submit" class="btn btn-success" style="flex: 1;">İçe Aktarmayı Başlat</button>

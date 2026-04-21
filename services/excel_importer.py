@@ -9,7 +9,7 @@ import logging
 
 logging.basicConfig(level=logging.INFO)
 
-def import_excel_to_db_with_map(filepath, mapping):
+def import_excel_to_db_with_map(filepath, mapping, currency='₺'):
     """
     Imports excel using the exact indices provided in the mapping dictionary.
     mapping format: {'sku': 0, 'img': 1, 'name': 2, 'desc': 3, 'price': 4, 'color': 5}
@@ -123,6 +123,10 @@ def import_excel_to_db_with_map(filepath, mapping):
         Product.query.delete()
         OrderItem.query.delete()
         Order.query.delete()
+        
+        # Create new order with selected currency
+        new_order = Order(currency=currency)
+        db.session.add(new_order)
         
         db.session.add_all(products_to_add)
         db.session.commit()

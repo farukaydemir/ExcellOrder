@@ -31,8 +31,8 @@ ExcellOrder is an easy-to-use, fast, and professional web-based tool that transf
 
 1. Depoyu indirin:
    ```bash
-   git clone https://github.com/kullaniciadi/excellorder.git
-   cd excellorder
+   git clone https://github.com/farukaydemir/ExcellOrder.git
+   cd ExcellOrder
    ```
 
 2. Bağımlılıkları yükleyin:
